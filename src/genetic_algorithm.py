@@ -3,7 +3,7 @@ import random
 class Individuo:
     def __init__(self, cromosoma):
         self.cromosoma = cromosoma  # Esta será una lista 
-        self.aptitud = 0            
+        self.aptitud = 0     
 
     """
     Entrada: Conjunto de numeros aleatorio (o definido) y limite dado por la persona
@@ -22,7 +22,17 @@ class Individuo:
         else:
             self.aptitud = sumaTotal # No se pasó por lo que es candidato a mejores
 
+
 # =============== Funciones auxiliares =========================================
+#Constantes para el algoritmo genetico
+TAMANO_POBLACION = 20
+TAMANO_CONJUNTO = 10
+GENERACIONES = 50
+PROB_CRUCE = 0.3 # Probabilidad de cruce del 30% (modificable)
+PROB_MUTACION = 0.5 # Probabilidad de mutación del 50% debido a una cantidad de población baja y capacidad grande de fallar (puede depender del limite)      
+LIMITE = 70 # De momento esto sería para pruebas
+
+
 """
 Entradas: Tamaño del conjunto a generar, un limite inferior y uno superior para realizar la generación de subconjuntos
 Funcionalidad: Genera un conjunto con valores aleatorios pero dentro del límite establecido
@@ -62,12 +72,26 @@ def generarPoblacionInicial (tamano, tamanoCromosoma):
         poblacion.append(Individuo(cromosoma))
     return poblacion
 
+"""
+Entradas: None
+Funcionalidad: Es el algoritmo principal que maneja los resultados finales por cada generación
+Salida: No definido
+"""
+def algoritmoGenetico ():
+    poblacion = generarPoblacionInicial(TAMANO_POBLACION, TAMANO_CONJUNTO)
+    conjuntoNumeros = generarConjuntoNumeros(TAMANO_CONJUNTO, 1, 100) #Prueba con ese rango
+    for generacion in range (GENERACIONES):
+        mejores = []
+        for individuo in poblacion:
+            individuo.calcularAptitud()
+            mejores.append(individuo)
+    # Falta revisar la forma de ordenar la lista de mejores usando su aptitud
 # ========== Prueba mieo =================================================
 
 if (__name__ == "__main__"):
     limite = 80
-    tamanoConjunto = 10
-    tamanoPoblacion = 10
+    tamanoConjunto = 15
+    tamanoPoblacion = 50
 
     conjuntoNumeros = generarConjuntoNumeros(tamanoConjunto, 1, 100)
     print(f"Conjunto de números usado: {conjuntoNumeros}")
