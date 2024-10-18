@@ -213,6 +213,8 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
     sumaMejorSolucion= 0
     poblacion = generarPoblacionInicial(tamanioPoblacion, tamanioConjunto)
     conjuntoNumeros = generarConjuntoNumeros(tamanioConjunto, 1, 70) #Prueba con ese rango
+    todasGeneraciones = [] # Almacenamos la cada generacion en un pesudoObjeto
+
     for individuo in poblacion: #Para calcular la aptitud de cada individuo de la población que no cambia
         individuo.calcularAptitud(conjuntoNumeros, limiteP) 
     
@@ -226,6 +228,9 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
         #Ahora tendría que ordenarlos revisando cuál es el mejor subconjunto y así sucesivamente
         subconjuntos.sort(key=lambda x: funcionAdaptabilidad(x, valorMaximo), reverse=True) #Con esto los ordeno por adaptabilidad. Tendría que poner al que tiene la mejor de primero y así sucesivamente
         print(f"Generación: {generacion +1} mejor individuo: {subconjuntos[0]} suma: {str(sum(subconjuntos[0]))}") #Prueba
+
+        # agarramos al mejor de la generación y lo almacenamos en la lista como un pesudoobjeto
+        todasGeneraciones.append({'generacion': generacion+1, 'subconjunto': subconjuntos[0], 'suma': sum(subconjuntos[0])})
 
         #Ahora tendría que ver si el mejor de esta generación es mejor que la solución anterior para guardarlo
         if(sum(subconjuntos[0]) > sumaMejorSolucion and sum(subconjuntos[0]) <= valorMaximo): #Si la suma del mejor subconjunto es mayor que el mejor valor actual y menor o igual que el que quiero maximizar entonces la guardo
@@ -247,6 +252,7 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
         subconjuntos = nuevosSubconjuntos #Los subconjuntos de la nueva generación se ponen en los actuales para operar con ellos
         #print(f"cruce: {individuoCruzado} sumaCruce: {str(sum(individuoCruzado))}")
         print(f"Mejor solución: {mejorSolucion} suma{sumaMejorSolucion}")
+    return mejorSolucion, sumaMejorSolucion, todasGeneraciones
         
     
     # Falta revisar la forma de ordenar la lista de mejores usando su aptitud
