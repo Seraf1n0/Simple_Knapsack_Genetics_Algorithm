@@ -28,7 +28,7 @@ button {
     color: white;
     border: none;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
@@ -44,7 +44,14 @@ table{
 }
 
 input{
-    max-width: 50px;
+    max-width: 60px;
+    font-size: 20px;
+}
+label{
+    font-size: 20px;
+}
+p{
+    font-size: 20px;
 }
 </style>
 <div class="entradas">
@@ -57,7 +64,7 @@ input{
             <input type="number" id="cantidadGeneraciones" name="cantidadGeneraciones" value="10" min="10" max="30" step="1" onkeydown="return false;">
 
             <label for="valorMaximo">Valor máximo: </label>
-            <input type="text" id="cantidadMaxima" name="cantidadMaxima">
+            <input type="number" id="cantidadMaxima" name="cantidadMaxima" min="0"> <!--Con el mín hace la validación solo-->
         </div>
         <div class="contenedorBoton">
             <button id="btnGenerar" type="submit">Generar Solución</button>
