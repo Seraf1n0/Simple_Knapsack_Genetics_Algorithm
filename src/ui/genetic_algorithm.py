@@ -14,16 +14,21 @@ def generarConjuntoNumeros (tamano, minimo, maximo):
     iterador = 0
     while(iterador < tamano):
         elemento = random.randint(minimo, maximo)
-        if not elemento in conjunto:
-            conjunto.append(elemento)
-            iterador +=1
+        conjunto.append(elemento)
+        iterador +=1
     print(conjunto)
     return conjunto
 
     
-#Aquí genero un subconjunto de tamaño aleatorio no mayor al de la población
+"""
+Entrada: El conjunto de elementos que forman la población generada aleatoriamente de forma previa
+Funcionalidad: Generar un subconjunto de tamaño aleatorio y con elementos aleatorios de la población
+Salida: Una lista
+"""
 def generarSubconjunto(poblacion):
-    tamanioSubconjunto = random.randint(1, len(poblacion) -1)
+    mitadPoblacion = len(poblacion) //2
+    limiteInferior = random.randint(1, mitadPoblacion)
+    tamanioSubconjunto = random.randint(limiteInferior, len(poblacion) -1)
     subconjunto = []
     #Ahora escojo elementos aleatorios de la población hasta completar el subconjunto
     i = 0
@@ -35,89 +40,40 @@ def generarSubconjunto(poblacion):
         i += 1
     return subconjunto
 
-#Aquí sería ver si se pasa de la suma (retorno cero) o es menor o igual al valor que deseo maximizar
+"""
+Entrada: individuo, es una de las sublistas de números que conforman una generación
+         limite, es el valor máximo que podría dar la suma de todos los elementos que conforman el individuo
+Funcionalidad: Sumar todos los elementos de la lista para verificar si el valor se pasa del máximo que se desea alcanzar
+               Esto es con el objetivo de en el algoritmo genético utilizar el resultado de esta función para ordenar los miembros de una generación
+               desde el más cercano al valor a máximizar a los más lejanos o que se pasan del límite
+Salida: 0 en caso de que el valor de la suma de todos los elementos que conforman al individuo sea mayor que el límite
+        El valor de la suma de todos los elementos que conforman el individuo en caso de que este sea menor o igual al límite
+"""
 def funcionAdaptabilidad(individuo, limite):
     if(sum(individuo) <= limite):
         return sum(individuo)
     else:
         return 0
 
-#Cruzo ambos
-#En caso de ser listas de tamaños diferentes genero un número aleatorio entre ambas
+"""
+Entrada: padre1 y padre2. Ambos son los mejores miembros de la generación
+Funcionalidad: Generar un cruce entre ambos en para obtener un hijo que tenga similitud con ambos padres
+Salida: El hijo generado en caso de realizarse el cruce o el padre1 en caso de que no se realice el cruce
+"""
 def cruce(padre1, padre2):
     if random.random() < PROB_CRUCE:
-        #Verifico si el tamaño de las listas es diferente
-        subconjunto = []
-        if(len(padre1) == len(padre2)):
-            #Si el largo de la lista es impar entonces tengo que sumarle 1
-            if(len(padre1) %2 != 0):
-                cantidadElementosPadre1 = (len(padre1) //2) +1 #Con esto completo y me queda del mismo tamaño
-                cantidadElementosPadre2 = len(padre1) //2
-                #Ahora agrego los elementos del padre 1 al nuevo subconjunto. Da igual el orden en que lo haga porque no altera el valor de la suma
-                for i in range(cantidadElementosPadre1):
-                    indiceAleatorio = random.randint(0, len(padre1) -1)
-                    subconjunto.append(padre1[indiceAleatorio])
-                
-                #Agrego los elementos del padre 2
-                for i in range(cantidadElementosPadre2):
-                    indiceAleatorio = random.randint(0, len(padre2) -1)
-                    subconjunto.append(padre2[indiceAleatorio])
-
-                #Retorno el subconjunto
-                return subconjunto
-            else:
-                #El largo de la lista no es impar
-                mitad = len(padre1) // 2
-                for i in range(mitad):
-                    #Agrego elemento del padre 1
-                    indiceAleatorio = random.randint(0, len(padre1) -1)
-                    subconjunto.append(padre1[indiceAleatorio])
-
-                    #Agrego elemento del padre 2
-                    indiceAleatorio = random.randint(0, len(padre2) -1)
-                    subconjunto.append(padre2[indiceAleatorio])
-                #Retorno el subconjunto
-                return subconjunto
-        else:
-            #El largo de ambos padres es diferente, entonces genero un aleatorio entre ambos largos
-            if(len(padre1) > len(padre2)):
-                largoAleatorio = random.randint(len(padre2), len(padre1))
-            else:
-                largoAleatorio = random.randint(len(padre1), len(padre2))
-            
-            #Verifico si el aleatorio es par o impar
-            if(largoAleatorio % 2 == 0):
-                #Es par, entonces agrego la misma cantidad de elementos de ambos padres
-                for i in range(largoAleatorio//2):
-                    #Agrego elemento del padre 1
-                    indiceAleatorio = random.randint(0, len(padre1) -1)
-                    subconjunto.append(padre1[indiceAleatorio])
-
-                    #Agrego elemento del padre 2
-                    indiceAleatorio = random.randint(0, len(padre2) -1)
-                    subconjunto.append(padre2[indiceAleatorio])
-                #Retorno el subconjunto
-                return subconjunto
-            else:
-                #El largo aleatorio es impar
-                cantidadElementosPadre1 = (largoAleatorio //2) +1 #Con esto completo y me queda del mismo tamaño
-                cantidadElementosPadre2 = largoAleatorio //2
-                #Ahora agrego los elementos del padre 1 al nuevo subconjunto. Da igual el orden en que lo haga porque no altera el valor de la suma
-                for i in range(cantidadElementosPadre1):
-                    indiceAleatorio = random.randint(0, len(padre1) -1)
-                    subconjunto.append(padre1[indiceAleatorio])
-                
-                #Agrego los elementos del padre 2
-                for i in range(cantidadElementosPadre2):
-                    indiceAleatorio = random.randint(0, len(padre2) -1)
-                    subconjunto.append(padre2[indiceAleatorio])
-
-                #Retorno el subconjunto
-                return subconjunto
+        puntoDeCruce = random.randint(0, len(padre1) - 1)
+        hijo = padre1[:puntoDeCruce] + padre2[puntoDeCruce:]
+        return hijo
     else:
         #No cruzo, retorno el padre 1 porque es el mejor
         return padre1
 
+"""
+Entrada: Un miembro de la generación para intentar mutarlo
+Funcionalidad: Cambiar alguno de los valores que forman al individuo por otro aleatorio para dar más variedad a la generación
+Salida: El individuo mutado en caso de hacerse la operación o el original si no se hizo nada 
+"""
 def mutacion(individuo):
     if random.random() < PROB_MUTACION:
         #Hago la mutación. Cambio un índice de forma aleatoria por un valor aleatorio también
@@ -130,7 +86,7 @@ def mutacion(individuo):
 """ 
 Entradas: None
 Funcionalidad: Es el algoritmo principal que maneja los resultados finales por cada generación
-Salida: No definido
+Salida: Todos los elementos de la salida son para utilizarlos en la interfaz gráfica
 """
 def algoritmoGenetico (tamanioConjunto, generaciones, valorMaximo):
     mejorSolucion = []
@@ -147,7 +103,6 @@ def algoritmoGenetico (tamanioConjunto, generaciones, valorMaximo):
         #Ahora tendría que ordenarlos revisando cuál es el mejor subconjunto y así sucesivamente
         subconjuntos.sort(key=lambda x: funcionAdaptabilidad(x, valorMaximo), reverse=True) #Con esto los ordeno por adaptabilidad. Tendría que poner al que tiene la mejor de primero y así sucesivamente
 
-        # agarramos al mejor de la generación y lo almacenamos en la lista como un pesudoobjeto
         
         #Ahora tendría que ver si el mejor de esta generación es mejor que la solución anterior para guardarlo
         if(sum(subconjuntos[0]) > sumaMejorSolucion and sum(subconjuntos[0]) <= valorMaximo): #Si la suma del mejor subconjunto es mayor que el mejor valor actual y menor o igual que el que quiero maximizar entonces la guardo
@@ -167,8 +122,14 @@ def algoritmoGenetico (tamanioConjunto, generaciones, valorMaximo):
             #Agrego el nuevo individuo al subconjunto
             nuevosSubconjuntos.append(individuoCruzado)
             #Agrego el subconjuntoNuevo a la lista de nuevosSubconjuntos
+        
+        #Añado un elemento aleatorio en cada generación para evitar lo más posible casos donde nunca se encuentra una solución
+        #Este elemento podría ser mejor que alguno de los hijos generados y ayude a crear una siguiente generación mejor
+        #Por la aleatoriedad del algoritmo es imposible evitar que en algún momento no pueda generar una respuesta. La idea es minimizar las ocasiones en que esto suceda
+        subconjuntoAleatorio = generarSubconjunto(conjuntoNumeros)
+        subconjuntos.append(subconjuntoAleatorio)
 
         subconjuntos = nuevosSubconjuntos #Los subconjuntos de la nueva generación se ponen en los actuales para operar con ellos
-    return mejorSolucion, sumaMejorSolucion, todasGeneraciones
+    return mejorSolucion, sumaMejorSolucion, todasGeneraciones, conjuntoNumeros
         
 
