@@ -7,7 +7,7 @@ class Individuo:
 
     """
     Entrada: Conjunto de numeros aleatorio (o definido) y limite dado por la persona
-    Funcionalida: Hacemos la prueba viendo si con la elección se pasa del limite o no
+    Funcionalidad: Hacemos la prueba viendo si con la elección se pasa del limite o no
     Salida: Se modifica la aptitud del individuo
     """
     def calcularAptitud (self, conjuntoNumeros, limite):
