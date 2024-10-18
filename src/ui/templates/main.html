@@ -41,8 +41,17 @@ button {
 
 table{
     margin: auto;
+    font-size: 20px;
+    border: 2px solid black; /* Borde de la tabla */
+    
 }
-
+th{
+    background-color: #00796b;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    width: 40px;
+}
 input{
     max-width: 60px;
     font-size: 20px;
@@ -52,6 +61,7 @@ label{
 }
 p{
     font-size: 20px;
+    
 }
 </style>
 <div class="entradas">
@@ -64,7 +74,7 @@ p{
             <input type="number" id="cantidadGeneraciones" name="cantidadGeneraciones" value="50" min="50" max="100" step="1" onkeydown="return false;">
 
             <label for="valorMaximo">Valor máximo: </label>
-            <input type="number" id="cantidadMaxima" name="cantidadMaxima" min="1" required>
+            <input type="number" id="cantidadMaxima" name="cantidadMaxima" min="10" required>
         </div>
         <div class="contenedorBoton">
             <button id="btnGenerar" type="submit">Generar Solución</button>

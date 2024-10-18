@@ -13,7 +13,7 @@ def generarSolucion():
     cantidadGeneraciones = int(request.form['cantidadGeneraciones'])
     valorMaximo = int(request.form['cantidadMaxima'])
 
-    mejorSolucion, sumaMejorSolucion, generaciones = algoritmoGenetico(tamanoPoblacion, 15, cantidadGeneraciones, valorMaximo)
+    mejorSolucion, sumaMejorSolucion, generaciones = algoritmoGenetico(tamanoPoblacion, cantidadGeneraciones, valorMaximo)
 
     return render_template('main.html', respuesta=True, mejorSolucion=mejorSolucion, sumaMejorSolucion=sumaMejorSolucion, generaciones=generaciones)
 
