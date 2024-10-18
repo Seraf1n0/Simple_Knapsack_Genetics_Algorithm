@@ -12,7 +12,7 @@ class Individuo:
     """
     def calcularAptitud (self, conjuntoNumeros, limite):
         sumaTotal = 0
-        for i in range(len(conjuntoNumeros)-1):
+        for i in range(len(conjuntoNumeros)):
             
             if (self.cromosoma[i] == 1): # Si el cromosoma indica que se selecciona entonces lo sumamos al total
                 sumaTotal += conjuntoNumeros[i]
@@ -31,7 +31,6 @@ GENERACIONES = 50
 PROB_CRUCE = 0.3 # Probabilidad de cruce del 30% (modificable)
 PROB_MUTACION = 0.5 # Probabilidad de mutación del 50% debido a una cantidad de población baja y capacidad grande de fallar (puede depender del limite)      
 LIMITE = 70 # De momento esto sería para pruebas
-
 
 """
 Entradas: Tamaño del conjunto a generar, un limite inferior y uno superior para realizar la generación de subconjuntos
@@ -73,23 +72,96 @@ def generarPoblacionInicial (tamano, tamanoCromosoma):
     return poblacion
 
 """
+Entradas: población a ordenar
+Funcionalidad: ordenar la población por medio de su aptitud. Los que tengan más alto este valor irán de primero
+Salida: La población ordenada
+"""
+def ordenarPorAptitud(poblacion):
+    largo = len(poblacion)
+    if largo > 1:
+        #Poner los menores que el pivote a la izquierda y los mayores a la derecha
+        pivote = poblacion[(largo-1) //2]
+        menores = []
+        mayores = []
+        poblacion = poblacion[0:((largo-1) //2)] + poblacion[((largo-1) //2)+1:]
+        largo = (len(poblacion)) 
+        for i in range(largo):
+            if(poblacion[i].aptitud < pivote.aptitud):
+                menores += [poblacion[i]]
+            elif(poblacion[i].aptitud >= pivote.aptitud):
+                mayores += [poblacion[i]]
+        return ordenarPorAptitud(mayores) + [pivote] + ordenarPorAptitud(menores)
+        #return ordenarPorAptitud(menores) + [pivote] + ordenarPorAptitud(mayores)
+    else:
+        return poblacion
+
+"""
+Entradas: Poblacion a ordenar
+Funcionalidad: Seleccionar unicamente la primer mitada de los mejores, utilizando la función ordenarPorAptitud
+Salida: Población de mejores aptitudes
+"""
+def seleccionarMejores(poblacion):
+    poblacionOrdenada = ordenarPorAptitud(poblacion)
+    poblacionOrdenada = poblacionOrdenada.reverse() # Asi los mejoles van a estar al inicio (si se ordena de menor a mashor)
+    # Agraramos solamente la primer mitad de los mejores
+    return poblacion[:len(poblacion)//2]
+
+def cruce(padre1, padre2):
+    #Magia negra (No es el cruce xd)
+    hijo1 = padre1
+    hijo2 = padre2
+    return hijo1, hijo2
+
+"""
 Entradas: None
 Funcionalidad: Es el algoritmo principal que maneja los resultados finales por cada generación
 Salida: No definido
 """
 def algoritmoGenetico ():
     poblacion = generarPoblacionInicial(TAMANO_POBLACION, TAMANO_CONJUNTO)
-    conjuntoNumeros = generarConjuntoNumeros(TAMANO_CONJUNTO, 1, 100) #Prueba con ese rango
-    for generacion in range (GENERACIONES):
-        mejores = []
+    conjuntoNumeros = generarConjuntoNumeros(TAMANO_CONJUNTO, 1, 100)
+
+    mejorGlobal = None  # Mejor solución hasta el momento, inicia en none por si queremos meter individo o solo un numero
+
+    for generacion in range(GENERACIONES):
+    
+        # Calculams la aptitud de cada individio de la poblacion actual
         for individuo in poblacion:
-            individuo.calcularAptitud()
-            mejores.append(individuo)
-    # Falta revisar la forma de ordenar la lista de mejores usando su aptitud
+            individuo.calcularAptitud(conjuntoNumeros, LIMITE)
+
+        # Tomamos unicamente un pequeño porcentaje de los individuos de aptidud menor al limite
+        mejores = seleccionarMejores(poblacion) # Retorna una lista de individupps
+
+        mejorGeneracion = mejores[0]
+        if ((mejorGlobal is None) or (mejorGeneracion.aptitud > mejorGlobal.aptitud)): # En caso de que sea la primera generación o bien haya habido un cambio, lo reasignamos
+            mejorGlobal = mejorGeneracion
+
+        print(f"Generación: {generacion}  Mejor solución actual: {mejorGlobal}")
+
+        nuevaPoblacion = []
+        while len(nuevaPoblacion) < TAMANO_POBLACION:
+            padre1, padre2 = random.sample(mejores, 2)
+            if (random.random() < PROB_CRUCE):
+                hijo1, hijo2 = cruce(padre1, padre2)
+                nuevaPoblacion.append(hijo1)
+                nuevaPoblacion.append(hijo2)
+            else:
+                # Si no cae en la probabikdad, mantenemos los padres en la generación
+                nuevaPoblacion.append(padre1)
+                nuevaPoblacion.append(padre2)
+
+        for individuo in nuevaPoblacion:
+            #Sería por cada individuo nuevo ver si puede ser mutado incluso usar la miutacion para el cromosoma
+            #mutacion(individuo)
+            1=1 # para que no de error el for
+
+        poblacion = nuevaPoblacion
+
+
 # ========== Prueba mieo =================================================
 
 if (__name__ == "__main__"):
-    limite = 80
+    limite = 1000
     tamanoConjunto = 15
     tamanoPoblacion = 50
 
