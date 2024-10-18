@@ -28,8 +28,8 @@ class Individuo:
 TAMANO_POBLACION = 20
 TAMANO_CONJUNTO = 10
 GENERACIONES = 50
-PROB_CRUCE = 0.3 # Probabilidad de cruce del 30% (modificable)
-PROB_MUTACION = 0.5 # Probabilidad de mutación del 50% debido a una cantidad de población baja y capacidad grande de fallar (puede depender del limite)      
+PROB_CRUCE = 0.2 # Probabilidad de cruce del 30% (modificable)
+PROB_MUTACION = 0.3 # Probabilidad de mutación del 50% debido a una cantidad de población baja y capacidad grande de fallar (puede depender del limite)      
 LIMITE = 70 # De momento esto sería para pruebas
 
 
@@ -212,7 +212,7 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
     mejorSolucion = []
     sumaMejorSolucion= 0
     poblacion = generarPoblacionInicial(tamanioPoblacion, tamanioConjunto)
-    conjuntoNumeros = generarConjuntoNumeros(tamanioConjunto, 1, 70) #Prueba con ese rango
+    conjuntoNumeros = generarConjuntoNumeros(tamanioConjunto, 1, valorMaximo) #Prueba con ese rango
     todasGeneraciones = [] # Almacenamos la cada generacion en un pesudoObjeto
 
     for individuo in poblacion: #Para calcular la aptitud de cada individuo de la población que no cambia
@@ -227,15 +227,15 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
         #Generar los subconjuntos
         #Ahora tendría que ordenarlos revisando cuál es el mejor subconjunto y así sucesivamente
         subconjuntos.sort(key=lambda x: funcionAdaptabilidad(x, valorMaximo), reverse=True) #Con esto los ordeno por adaptabilidad. Tendría que poner al que tiene la mejor de primero y así sucesivamente
-        print(f"Generación: {generacion +1} mejor individuo: {subconjuntos[0]} suma: {str(sum(subconjuntos[0]))}") #Prueba
 
         # agarramos al mejor de la generación y lo almacenamos en la lista como un pesudoobjeto
-        todasGeneraciones.append({'generacion': generacion+1, 'subconjunto': subconjuntos[0], 'suma': sum(subconjuntos[0])})
-
+        
         #Ahora tendría que ver si el mejor de esta generación es mejor que la solución anterior para guardarlo
         if(sum(subconjuntos[0]) > sumaMejorSolucion and sum(subconjuntos[0]) <= valorMaximo): #Si la suma del mejor subconjunto es mayor que el mejor valor actual y menor o igual que el que quiero maximizar entonces la guardo
             mejorSolucion = subconjuntos[0].copy()
             sumaMejorSolucion = sum(subconjuntos[0])
+            todasGeneraciones.append({'generacion': generacion+1, 'subconjunto': mejorSolucion, 'suma': sumaMejorSolucion})
+
         
         #Ahora tendría que hacer el cruce y la mutación. Los padres van a ser los dos mejores de la generación actual
         nuevosSubconjuntos = []
@@ -250,34 +250,6 @@ def algoritmoGenetico (tamanioPoblacion, tamanioConjunto, generaciones, valorMax
             #Agrego el subconjuntoNuevo a la lista de nuevosSubconjuntos
 
         subconjuntos = nuevosSubconjuntos #Los subconjuntos de la nueva generación se ponen en los actuales para operar con ellos
-        #print(f"cruce: {individuoCruzado} sumaCruce: {str(sum(individuoCruzado))}")
-        print(f"Mejor solución: {mejorSolucion} suma{sumaMejorSolucion}")
     return mejorSolucion, sumaMejorSolucion, todasGeneraciones
         
-    
-    # Falta revisar la forma de ordenar la lista de mejores usando su aptitud
-# ========== Prueba mieo =================================================
 
-algoritmoGenetico(50, 15, 10, 200)
-"""
-
-if (__name__ == "__main__"):
-    limite = 1000
-    tamanoConjunto = 15
-    tamanoPoblacion = 50
-
-    conjuntoNumeros = generarConjuntoNumeros(tamanoConjunto, 1, 100)
-    print(f"Conjunto de números usado: {conjuntoNumeros}")
-
-    poblacion = generarPoblacionInicial(tamanoPoblacion, tamanoConjunto)
-
-    # Prueba de una sola generación, pa ver sisirve
-    for individuo in poblacion:
-        individuo.calcularAptitud(conjuntoNumeros, limite)
-        print(f"Cromosoma: {individuo.cromosoma}, Aptitud: {individuo.aptitud}")
-
-    #Ordenarlos por aptitud
-    poblacionOrdenada = ordenarPorAptitud(poblacion)
-    for individuo in poblacionOrdenada:
-        print(f"Aptitud: {individuo.aptitud}")
-"""
